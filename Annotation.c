@@ -1,3 +1,6 @@
+//Unicode (UEFI 使用的是 UCS-2 / UTF-16，16 位元)，ASCII (8 位元)
+//成功地將原本需要 2 Bytes 儲存的內容，壓縮進了 1 Byte 的櫃子裡
+//函式通常只用於處理 BIOS 變數名稱、序號、型號 等通常只會出現 ASCII 字元的欄位。
 CHAR8* ConvertChar16toChar8(CHAR16 *InputString16)
 {
     CHAR8 *OutString8 = (CHAR8 *)NULL;
@@ -17,7 +20,10 @@ CHAR8* ConvertChar16toChar8(CHAR16 *InputString16)
       "ABC" 來跑一遍那行公式： AllocateZeroPool((Strlen16 + 1) * sizeof(CHAR8))
       1. Strlen16：回傳 3（因為有 A, B, C）。
       2. + 1：變成 4（預留一個位置給 \0）。
-      3. * sizeof(CHAR8)：變成 $4 \times 1 = 4$。
+      3. * sizeof(CHAR8)：變成 4x1 = 4。
+      4. 最終結果：跟系統要了 4 個 Bytes 的空間。
+      這行寫成 sizeof(CHAR16)，結果會變成 4 x 2 = 8 Bytes。
+      雖然 StrLen 同樣回傳 3，但因為**單位（sizeof）**變了
       StrLen 算個數，sizeof 算單位大小
       */
     Strlen16 = StrLen(InputString16);
@@ -29,6 +35,9 @@ CHAR8* ConvertChar16toChar8(CHAR16 *InputString16)
     if (NULL != OutString8){
         while(InputString16[Index] != L'\0')
         {
+            //強制轉型將Char16改成Char8並放入OutString8[Index]
+            //來源 (InputString16[Index]): 它的型別是 CHAR16，在記憶體中佔 16 位元 (2 Bytes)
+            //目的地 (OutString8[Index]): 它的型別是 CHAR8，在記憶體中只佔 8 位元 (1 Byte)。
             OutString8[Index] = (CHAR8)InputString16[Index];
             Index++;
         }
