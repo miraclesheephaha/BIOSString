@@ -46,3 +46,13 @@ CHAR8* ConvertChar16toChar8(CHAR16 *InputString16)
     }
     return OutString8;
 }
+
+/*
+    %a	ASCII 字串	    CHAR8 *	        "Hello"
+    %s	Unicode 字串	CHAR16 *	    L"Hello"
+    %d	十進位整數	    INT32 / INTN	100
+    %x	十六進位整數	    UINT32 / UINTN	0x3F
+    %p	指標 (地址)	    VOID *	        0x7FF12340
+    %r	EFI 狀態碼	    EFI_STATUS	    Success
+*/
+
