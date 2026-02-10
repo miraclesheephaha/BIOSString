@@ -56,3 +56,26 @@ CHAR8* ConvertChar16toChar8(CHAR16 *InputString16)
     %r	EFI 狀態碼	    EFI_STATUS	    Success
 */
 
+/*
+    Questions:為何debug需要兩個括號?
+    在 EDKII 的源碼（DebugLib.h）中，它的定義大致如下：
+    #define DEBUG(Expression)        \
+      do {                           \
+        if (DebugPrintEnabled()) {   \
+          DebugPrint Expression;     \
+        }                            \
+      } while (FALSE)
+    1. 如果你呼叫 DEBUG((DEBUG_INFO, "Hi"))。
+    2. Expression 就等於 (DEBUG_INFO, "Hi")。
+    3. 替換後變成 DebugPrint (DEBUG_INFO, "Hi");。
+    4. 這就變成了一個標準的函式呼叫，括號剛好跟 DebugPrint 配對！
+
+    Questions:DEBUG_INFO意思?
+    DEBUG_INFO 是一個**「錯誤等級 (Error Level) 遮罩」。它用來定義這條 Debug 訊息的重要程度**
+    BIOS 裡有成千上萬條 Log，如果你全部都印，開機速度會變得很慢。透過 DEBUG_INFO，你可以決定哪些訊息要顯示，哪些要隱藏。
+    等級 (Error Level)	數值 (Hex)	用途
+    DEBUG_INIT	        0x00000001	初始化階段（如 CPU、Chipset 剛啟動）。
+    DEBUG_WARN	        0x00000002	警告訊息（雖然有錯，但程式還能跑）。
+    DEBUG_INFO	        0x00000040	一般資訊（這最常用，用來觀察程式跑得順不順）。
+    DEBUG_ERROR	        0x80000000	嚴重錯誤（程式跑不下去了，這通常不會被過濾掉）。
+*/
